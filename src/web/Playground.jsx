@@ -5,11 +5,10 @@ import { COMPLETE_TEXT, COMPLETE_TITLE, COMPLIMENTS, FOODS, FORTUNES, TEXT } fro
 import { C } from '../video/theme.js';
 import { playSfx } from './sound.js';
 import { copyText, fortuneIndexForToday, loadSave, todayKey, writeSave } from './storage.js';
+import { completeShare, fortuneShare, prizeShare, smileShare } from './shareText.js';
 
 const FLOWER_COLORS = [C.pinkDeep, '#FFB7C9', C.yellow, '#fff', C.mint, '#C7A6FF'];
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const oneLine = (s) => s.replace(/\n/g, '，');
-
 // 图鉴里的全部奖品
 const PRIZES = [
   ...COMPLIMENTS.map((text, i) => ({ id: `c${i}`, kind: 'compliment', title: TEXT.prize1Title, text, label: `夸夸 ${i + 1}` })),
@@ -110,7 +109,7 @@ const DailyFortune = ({ save, updateSave, onShare }) => {
           <div className="fortune-level">{fortune.level}</div>
           <div className="fortune-text">{fortune.text}</div>
           <div className="fortune-tip">明天再来抽新的哦</div>
-          <ShareButton text={`我的今日签：${fortune.level}，${fortune.text}`} onShare={onShare} />
+          <ShareButton text={fortuneShare(fortune)} onShare={onShare} />
         </div>
       )}
     </div>
@@ -225,7 +224,7 @@ const GachaStation = ({ save, updateSave, onFlowers, onShare }) => {
             <div className="prize-title">{prize.title}</div>
             <div className="prize-text">{prize.text}</div>
             <ShareButton
-              text={`我在「快乐扭蛋机」抽到了【${prize.title}】${oneLine(prize.text)}！图鉴已收集 ${collectedCount}/${PRIZES.length}`}
+              text={prizeShare(prize, collectedCount, PRIZES.length)}
               onShare={onShare}
             />
             <div className="prize-tip">点卡片收下</div>
@@ -261,7 +260,7 @@ const GachaStation = ({ save, updateSave, onFlowers, onShare }) => {
             <div className="prize-title">{COMPLETE_TITLE}</div>
             <div className="prize-text">{COMPLETE_TEXT}</div>
             <Cat size={120} expression="happy" arms="up" />
-            <ShareButton text={`我集齐了「快乐扭蛋机」全部 ${PRIZES.length} 款扭蛋！${oneLine(COMPLETE_TEXT)}`} onShare={onShare} />
+            <ShareButton text={completeShare(PRIZES.length, COMPLETE_TEXT)} onShare={onShare} />
             <div className="prize-tip">点一下关闭</div>
             <Confetti />
           </div>
@@ -327,7 +326,7 @@ const SmileQuestion = ({ onShare }) => {
             <br />
             明天继续～
           </div>
-          <ShareButton text="报告小猫店长：佳佳笑了，任务完成！" onShare={onShare} />
+          <ShareButton text={smileShare} onShare={onShare} />
           <Confetti />
         </div>
       )}
