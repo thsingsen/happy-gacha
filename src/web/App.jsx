@@ -55,6 +55,7 @@ export const App = () => {
           controls={stage === 'movie'}
           clickToPlay={stage === 'movie'}
           pauseWhenBuffering
+          numberOfSharedAudioTags={16}
           acknowledgeRemotionLicense
         />
         {stage === 'cover' && (

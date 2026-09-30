@@ -3,10 +3,10 @@ import { AbsoluteFill, Easing, interpolate, random, useCurrentFrame } from 'remo
 import { C, FONT, WIDTH } from '../theme.js';
 import { TEXT } from '../text.js';
 import { Cat } from '../Cat.jsx';
-import { Basket, Bicycle, Bouquet, Donut, MilkTea } from '../Props.jsx';
+import { Bouquet, Donut, MilkTea, ShoppingCart, Skateboard } from '../Props.jsx';
 import { Caption, Place, SceneFade, Sfx, Sparkles, blinkAt } from '../common.jsx';
 
-// 第二幕：骑车采购（420 帧）
+// 第二幕：踩着滑板、推着小推车去采购（420 帧）
 // 视差：远处的楼走得慢，店铺走得中速，路面走得快，于是画面有了纵深感。
 
 const GROUND = 1560;
@@ -72,14 +72,15 @@ export const Shopping = () => {
     extrapolateRight: 'clamp',
   });
 
-  const bob = Math.sin(frame * 0.6) * 6 * (1 - slowAmt);
+  // 路面小颠簸
+  const bob = Math.sin(frame * 0.9) * 3 * (1 - slowAmt);
 
-  // 小猫跳起接奶茶
+  // 小猫从滑板上跳起接奶茶
   const rise = interpolate(frame, [318, CATCH], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.quad) });
   const fall = interpolate(frame, [CATCH + 10, LAND], [0, 1], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.quad) });
-  const jumpUp = (rise - fall) * 220;
+  const jumpUp = (rise - fall) * 240;
   const catX = 315 + (rise - fall) * 75;
-  const catBottom = 1318 + bob - jumpUp;
+  const catBottom = 1519 + bob - jumpUp;
   const jumping = frame >= 318 && frame < LAND;
   // 起跳前先蹲一下、起跳时拉长、落地时压扁
   const squash = interpolate(frame, [308, 314, 318, 330, LAND, LAND + 3, LAND + 10], [1, 0.82, 1.14, 1, 1, 0.8, 1], {
@@ -93,9 +94,9 @@ export const Shopping = () => {
   if (frame >= TEA_FLY && frame < 318) expression = 'shock';
   if (holdingTea) expression = 'happy';
 
-  // 车筐上的物品堆，越多晃得越厉害
+  // 推车里的物品堆，越多晃得越厉害
   const basketX = 600;
-  const basketTop = 1222 + bob;
+  const basketTop = 1363 + bob;
   const landed = SHOP_PASS.map((t) => frame >= t + 12);
   const count = landed.filter(Boolean).length;
   const amp = [0, 1, 4, 9][count] + interpolate(frame, [255, TEA_FLY], [0, 6], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
@@ -157,18 +158,17 @@ export const Shopping = () => {
         return <div key={i} style={{ position: 'absolute', left: x, top: GROUND + 140, width: 160, height: 24, borderRadius: 12, background: '#fff', opacity: 0.8 }} />;
       })}
 
-      <Place x={400} y={GROUND + 40 + bob * 0.3} z={3}>
-        <Bicycle size={620} spin={dist * 1.5} />
+      <Place x={315} y={1570 + bob} z={3}>
+        <Skateboard width={300} spin={dist * 3.2} />
       </Place>
 
-      <Place x={catX} y={catBottom} z={4} rotate={jumping ? -10 : 0} sx={1 + (1 - squash) * 0.7} sy={squash}>
+      <Place x={catX} y={catBottom} z={4} rotate={jumping ? -10 : 3} sx={1 + (1 - squash) * 0.7} sy={squash}>
         <Cat
           size={360}
           expression={expression}
           arms={jumping || holdingTea ? 'up' : 'hold'}
           blink={blinkAt(frame, 60)}
           tail={Math.sin(frame / 5) * 14}
-          pedal={jumping ? undefined : (dist * 0.75 * Math.PI) / 180}
         />
       </Place>
 
@@ -194,9 +194,9 @@ export const Shopping = () => {
           );
         })}
       </div>
-      <Place x={basketX} y={basketTop + 128} z={5}>
-        <Basket width={230} />
-      </Place>
+      <div style={{ position: 'absolute', left: basketX - 178, top: basketTop - 19, zIndex: 5 }}>
+        <ShoppingCart width={300} spin={dist * 2.4} />
+      </div>
 
       {[0, 1, 2].map(renderFlying)}
       {teaX !== undefined && (

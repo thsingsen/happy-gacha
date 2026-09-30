@@ -136,49 +136,52 @@ export const Hand = ({ size = 160, pressed = 0, style }) => (
   </svg>
 );
 
-export const Bicycle = ({ size = 620, spin = 0, style }) => {
-  const wheel = (cx) => (
-    <g transform={`translate(${cx} 150)`}>
-      <circle r="62" fill="none" stroke={INK} strokeWidth="12" />
-      <circle r="62" fill="none" stroke="#555" strokeWidth="5" />
-      <g transform={`rotate(${spin})`} stroke={INK} strokeWidth="4">
-        {[0, 45, 90, 135].map((a) => (
-          <line key={a} x1="-58" y1="0" x2="58" y2="0" transform={`rotate(${a})`} />
-        ))}
-      </g>
-      <circle r="9" fill={INK} />
-    </g>
-  );
-  return (
-    <svg viewBox="0 0 400 230" width={size} height={size * (230 / 400)} style={{ overflow: 'visible', ...style }}>
-      {wheel(80)}
-      {wheel(320)}
-      <g stroke={C.pinkDeep} strokeWidth="14" strokeLinecap="round" strokeLinejoin="round" fill="none">
-        <path d="M80 150 L170 150 L250 70 L140 70 Z" />
-        <path d="M170 150 L130 40" />
-        <path d="M250 70 L320 150" />
-        <path d="M250 70 L268 20" />
-      </g>
-      <path d="M105 36 L160 36" stroke={INK} strokeWidth="16" strokeLinecap="round" />
-      <path d="M252 20 L292 14" stroke={INK} strokeWidth="12" strokeLinecap="round" />
-      <circle cx="170" cy="150" r="22" fill="#fff" stroke={INK} strokeWidth="5" />
-      <g transform={`rotate(${spin * 0.5} 170 150)`}>
-        <line x1="136" y1="150" x2="204" y2="150" stroke={INK} strokeWidth="8" strokeLinecap="round" />
-        <rect x="190" y="143" width="26" height="14" rx="4" fill={C.yellow} stroke={INK} strokeWidth="4" transform={`rotate(${-spin * 0.5} 203 150)`} />
-        <rect x="124" y="143" width="26" height="14" rx="4" fill={C.yellow} stroke={INK} strokeWidth="4" transform={`rotate(${-spin * 0.5} 137 150)`} />
-      </g>
-    </svg>
-  );
-};
+// 轮子：spin 是转过的角度，画一条线才看得出它在转
+const Wheel = ({ cx, cy, r, spin, fill = C.yellow, mark = '#fff' }) => (
+  <g transform={`translate(${cx} ${cy})`}>
+    <circle r={r} fill={fill} stroke={INK} strokeWidth="5" />
+    <line x1={-r * 0.6} y1="0" x2={r * 0.6} y2="0" stroke={mark} strokeWidth="5" strokeLinecap="round" transform={`rotate(${spin})`} />
+    <circle r={r * 0.25} fill={INK} />
+  </g>
+);
 
-export const Basket = ({ width = 240, style }) => (
-  <svg viewBox="0 0 120 70" width={width} height={width * (70 / 120)} style={{ overflow: 'visible', ...style }}>
-    <path d="M4 6 L116 6 L104 66 L16 66 Z" fill="#E4B477" stroke={INK} strokeWidth="4" strokeLinejoin="round" />
-    {[26, 46, 66, 86].map((x) => (
-      <line key={x} x1={x} y1="8" x2={x - 2 + (x - 60) * -0.05} y2="64" stroke="#B9854A" strokeWidth="3" />
-    ))}
-    <line x1="10" y1="30" x2="110" y2="30" stroke="#B9854A" strokeWidth="3" />
-    <rect x="0" y="0" width="120" height="12" rx="6" fill="#D19A5B" stroke={INK} strokeWidth="4" />
+// 滑板：小猫站在上面，脚不用动，只有轮子转
+export const Skateboard = ({ width = 300, spin = 0, style }) => (
+  <svg viewBox="0 0 300 70" width={width} height={width * (70 / 300)} style={{ overflow: 'visible', ...style }}>
+    <rect x="58" y="30" width="24" height="12" rx="3" fill="#9AA3B5" stroke={INK} strokeWidth="4" />
+    <rect x="218" y="30" width="24" height="12" rx="3" fill="#9AA3B5" stroke={INK} strokeWidth="4" />
+    <Wheel cx={70} cy={52} r={16} spin={spin} />
+    <Wheel cx={230} cy={52} r={16} spin={spin} />
+    <path
+      d="M30 14 L270 14 Q290 14 296 0 L302 4 Q296 32 270 32 L30 32 Q4 32 -2 4 L4 0 Q10 14 30 14 Z"
+      fill={C.pinkDeep} stroke={INK} strokeWidth="5" strokeLinejoin="round"
+    />
+    <path d="M60 23 L240 23" stroke="#fff" strokeWidth="4" strokeLinecap="round" strokeDasharray="14 12" opacity="0.8" />
+  </svg>
+);
+
+// 超市小推车：车筐顶边在 y=20，把手向左伸到 x=-78 给小猫抓
+export const ShoppingCart = ({ width = 300, spin = 0, style }) => (
+  <svg viewBox="0 0 320 250" width={width} height={width * (250 / 320)} style={{ overflow: 'visible', ...style }}>
+    <path d="M70 20 L-66 11" stroke={INK} strokeWidth="11" strokeLinecap="round" />
+    <path d="M70 20 L-66 11" stroke="#C9D2E0" strokeWidth="5" strokeLinecap="round" />
+    <rect x="-92" y="2" width="40" height="20" rx="10" fill={C.pinkDeep} stroke={INK} strokeWidth="5" />
+    <g stroke={INK} strokeWidth="8" strokeLinecap="round">
+      <line x1="104" y1="128" x2="110" y2="206" />
+      <line x1="276" y1="128" x2="270" y2="206" />
+      <line x1="100" y1="188" x2="282" y2="188" />
+    </g>
+    <path d="M70 20 L310 20 L286 130 L94 130 Z" fill="#E4F7EF" stroke={INK} strokeWidth="6" strokeLinejoin="round" />
+    <g stroke="#7CCBB0" strokeWidth="4">
+      {[110, 150, 190, 230, 270].map((x) => (
+        <line key={x} x1={x} y1="24" x2={x - (x - 190) * 0.1} y2="126" />
+      ))}
+      <line x1="78" y1="58" x2="302" y2="58" />
+      <line x1="86" y1="94" x2="294" y2="94" />
+    </g>
+    <rect x="62" y="12" width="256" height="16" rx="8" fill={C.mint} stroke={INK} strokeWidth="5" />
+    <Wheel cx={110} cy={222} r={24} spin={spin} fill="#fff" mark={C.pinkDeep} />
+    <Wheel cx={270} cy={222} r={24} spin={spin} fill="#fff" mark={C.pinkDeep} />
   </svg>
 );
 

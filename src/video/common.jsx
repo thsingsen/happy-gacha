@@ -44,9 +44,13 @@ export const usePop = (delay = 0, config = { damping: 12 }) => {
 export const asset = (path) =>
   getRemotionEnvironment().isPlayer ? new URL(path, document.baseURI).href : staticFile(path);
 
+// 每个音效的时长（秒），和 scripts/make-audio.mjs 里合成的长度一致
+const SFX_SECONDS = { alarm: 2, boing: 0.5, click: 0.1, ding: 1.2, fanfare: 1.8, meow: 0.72, poof: 1, pop: 0.25, sparkle: 0.9, whoosh: 0.5 };
+
 // rate 是播放速度：大于 1 声音更高更快（开心），小于 1 更低更慢（懒洋洋、委屈）
+// 只在发声的那几帧挂载：网页播放器同时能挂的声音数量有上限，拖进度条时叠太多会报错
 export const Sfx = ({ at, name, volume = 0.8, rate = 1 }) => (
-  <Sequence from={at} durationInFrames={90} layout="none">
+  <Sequence from={at} durationInFrames={Math.ceil(((SFX_SECONDS[name] ?? 2) * 30) / rate) + 4} layout="none">
     <Html5Audio src={asset(`audio/${name}.mp3`)} volume={volume} playbackRate={rate} />
   </Sequence>
 );

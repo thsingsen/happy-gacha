@@ -11,7 +11,6 @@ import { C } from './theme.js';
 // tail: 尾巴摆动角度（度）
 // floured: 被面粉扑成白猫
 // puffed: 炸毛
-// pedal: 踩踏板的角度（弧度），传了之后两只脚会一前一后画圈
 
 const DEFAULT_MOUTH = {
   normal: 'w',
@@ -113,21 +112,21 @@ function Mouth({ type }) {
 
 function Arm({ side, pose, fur, line }) {
   const s = side === 'left' ? -1 : 1;
-  const shoulder = { x: 200 + s * 70, y: 272 };
+  const shoulder = { x: 200 + s * 56, y: 276 };
   const paw = {
-    down: { x: 200 + s * 62, y: 318 },
-    up: { x: 200 + s * 150, y: 150 },
-    hold: { x: 200 + s * 38, y: 268 },
+    down: { x: 200 + s * 56, y: 334 },
+    up: { x: 200 + s * 140, y: 150 },
+    hold: { x: 200 + s * 34, y: 272 },
     face: { x: 200 + s * 48, y: 196 },
   }[pose];
   return (
     <g>
-      <line x1={shoulder.x} y1={shoulder.y} x2={paw.x} y2={paw.y} stroke={line} strokeWidth="50" strokeLinecap="round" />
-      <line x1={shoulder.x} y1={shoulder.y} x2={paw.x} y2={paw.y} stroke={fur} strokeWidth="40" strokeLinecap="round" />
-      <circle cx={paw.x} cy={paw.y} r="30" fill={fur} stroke={line} strokeWidth="5" />
-      <g stroke={line} strokeWidth="4" strokeLinecap="round">
-        <line x1={paw.x - 9} y1={paw.y + 14} x2={paw.x - 9} y2={paw.y + 24} />
-        <line x1={paw.x + 9} y1={paw.y + 14} x2={paw.x + 9} y2={paw.y + 24} />
+      <line x1={shoulder.x} y1={shoulder.y} x2={paw.x} y2={paw.y} stroke={line} strokeWidth="34" strokeLinecap="round" />
+      <line x1={shoulder.x} y1={shoulder.y} x2={paw.x} y2={paw.y} stroke={fur} strokeWidth="25" strokeLinecap="round" />
+      <circle cx={paw.x} cy={paw.y} r="21" fill={fur} stroke={line} strokeWidth="5" />
+      <g stroke={line} strokeWidth="3.5" strokeLinecap="round">
+        <line x1={paw.x - 6} y1={paw.y + 10} x2={paw.x - 6} y2={paw.y + 17} />
+        <line x1={paw.x + 6} y1={paw.y + 10} x2={paw.x + 6} y2={paw.y + 17} />
       </g>
     </g>
   );
@@ -141,13 +140,12 @@ export const Cat = ({
   tail = 0,
   floured = false,
   puffed = false,
-  pedal,
   size = 400,
   style,
 }) => {
-  const fur = floured ? '#FBF8F3' : C.orange;
-  const stripe = floured ? '#F3D9BC' : C.orangeDark;
-  const belly = floured ? '#FFFFFF' : C.catCream;
+  const fur = floured ? '#FBF8F3' : C.catFur;
+  const stripe = floured ? '#F3D9BC' : C.catStripe;
+  const belly = floured ? '#FFFFFF' : C.catBelly;
   const line = C.brown;
   const mouthType = mouth ?? DEFAULT_MOUTH[expression];
   const armsInFront = arms === 'face' || arms === 'hold';
@@ -156,42 +154,47 @@ export const Cat = ({
     <svg viewBox="0 0 400 450" width={size} height={size * 1.125} style={{ overflow: 'visible', ...style }}>
       {puffed && (
         <g fill={fur} stroke={line} strokeWidth="5" strokeLinejoin="round">
-          <polygon points={spikes(200, 330, 150, 118, 18)} />
-          <polygon points={spikes(200, 170, 172, 140, 20)} />
+          <polygon points={spikes(200, 335, 112, 90, 16)} />
+          <polygon points={spikes(200, 170, 150, 124, 20)} />
         </g>
       )}
 
-      <g transform={`rotate(${tail} 300 380)`}>
-        <path d="M300 380 Q390 360 372 250" fill="none" stroke={line} strokeWidth="40" strokeLinecap="round" />
-        <path d="M300 380 Q390 360 372 250" fill="none" stroke={fur} strokeWidth="30" strokeLinecap="round" />
-        <path d="M380 290 L365 285 M384 270 L368 268" stroke={stripe} strokeWidth="8" strokeLinecap="round" />
+      <g transform={`rotate(${tail} 262 395)`}>
+        <path d="M262 395 Q372 392 356 262 Q352 232 376 222" fill="none" stroke={line} strokeWidth="26" strokeLinecap="round" />
+        <path d="M262 395 Q372 392 356 262 Q352 232 376 222" fill="none" stroke={fur} strokeWidth="17" strokeLinecap="round" />
+        <path d="M349 310 L367 306 M349 288 L367 286" stroke={stripe} strokeWidth="6" strokeLinecap="round" />
       </g>
 
-      {[
-        [145, 0],
-        [255, Math.PI],
-      ].map(([fx, offset]) => {
-        const dx = pedal === undefined ? 0 : Math.cos(pedal + offset) * 22;
-        const dy = pedal === undefined ? 0 : Math.sin(pedal + offset) * 16;
-        return <ellipse key={fx} cx={fx + dx} cy={425 + dy} rx="40" ry="22" fill={fur} stroke={line} strokeWidth="5" />;
-      })}
+      {[172, 228].map((x) => (
+        <g key={x}>
+          <line x1={x} y1="370" x2={x} y2="420" stroke={line} strokeWidth="34" strokeLinecap="round" />
+          <line x1={x} y1="370" x2={x} y2="420" stroke={fur} strokeWidth="24" strokeLinecap="round" />
+          <ellipse cx={x + (x < 200 ? -6 : 6)} cy="428" rx="27" ry="16" fill={fur} stroke={line} strokeWidth="5" />
+        </g>
+      ))}
 
-      <ellipse cx="200" cy="335" rx="122" ry="100" fill={fur} stroke={line} strokeWidth="5" />
-      <ellipse cx="200" cy="350" rx="72" ry="64" fill={belly} />
+      <ellipse cx="200" cy="332" rx="80" ry="98" fill={fur} stroke={line} strokeWidth="5" />
+      <ellipse cx="200" cy="350" rx="46" ry="62" fill={belly} />
+      <g stroke={stripe} strokeWidth="7" strokeLinecap="round">
+        <line x1="126" y1="320" x2="144" y2="324" />
+        <line x1="124" y1="344" x2="142" y2="346" />
+        <line x1="274" y1="320" x2="256" y2="324" />
+        <line x1="276" y1="344" x2="258" y2="346" />
+      </g>
 
       {!armsInFront && <Arm side="left" pose={arms} fur={fur} line={line} />}
       {!armsInFront && <Arm side="right" pose={arms} fur={fur} line={line} />}
 
-      <path d="M112 76 L100 12 L176 60 Z" fill={fur} stroke={line} strokeWidth="5" strokeLinejoin="round" />
-      <path d="M288 76 L300 12 L224 60 Z" fill={fur} stroke={line} strokeWidth="5" strokeLinejoin="round" />
-      <path d="M118 66 L110 30 L152 58 Z" fill={C.pink} />
-      <path d="M282 66 L290 30 L248 58 Z" fill={C.pink} />
+      <path d="M126 84 L112 14 L182 62 Z" fill={fur} stroke={line} strokeWidth="5" strokeLinejoin="round" />
+      <path d="M274 84 L288 14 L218 62 Z" fill={fur} stroke={line} strokeWidth="5" strokeLinejoin="round" />
+      <path d="M131 72 L121 34 L160 60 Z" fill={C.pinkDeep} />
+      <path d="M269 72 L279 34 L240 60 Z" fill={C.pinkDeep} />
 
-      <ellipse cx="200" cy="170" rx="138" ry="116" fill={fur} stroke={line} strokeWidth="5" />
-      <g stroke={stripe} strokeWidth="9" strokeLinecap="round">
-        <line x1="200" y1="62" x2="200" y2="92" />
-        <line x1="176" y1="66" x2="180" y2="90" />
-        <line x1="224" y1="66" x2="220" y2="90" />
+      <ellipse cx="200" cy="170" rx="120" ry="104" fill={fur} stroke={line} strokeWidth="5" />
+      <g stroke={stripe} strokeWidth="8" strokeLinecap="round">
+        <line x1="200" y1="72" x2="200" y2="98" />
+        <line x1="178" y1="76" x2="182" y2="96" />
+        <line x1="222" y1="76" x2="218" y2="96" />
       </g>
       <ellipse cx="200" cy="222" rx="62" ry="40" fill={belly} opacity="0.9" />
 
@@ -201,14 +204,14 @@ export const Cat = ({
 
       <Eyes expression={expression} blink={blink} />
       <ellipse
-        cx="110" cy="218" rx="24" ry="13" fill={C.pinkDeep}
-        opacity={expression === 'shy' ? 0.85 : 0.45}
+        cx="122" cy="218" rx="22" ry="12" fill="#FF5C8A"
+        opacity={expression === 'shy' ? 0.8 : 0.4}
       />
       <ellipse
-        cx="290" cy="218" rx="24" ry="13" fill={C.pinkDeep}
-        opacity={expression === 'shy' ? 0.85 : 0.45}
+        cx="278" cy="218" rx="22" ry="12" fill="#FF5C8A"
+        opacity={expression === 'shy' ? 0.8 : 0.4}
       />
-      <path d="M192 206 L208 206 L200 216 Z" fill={C.pinkDeep} stroke={line} strokeWidth="3" strokeLinejoin="round" />
+      <path d="M192 206 L208 206 L200 216 Z" fill="#E0566F" stroke={line} strokeWidth="3" strokeLinejoin="round" />
       <Mouth type={mouthType} />
       <g stroke={line} strokeWidth="3.5" strokeLinecap="round">
         <line x1="62" y1="200" x2="112" y2="208" />
