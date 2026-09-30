@@ -13,6 +13,9 @@ export const fortuneShare = (fortune) => `我抽到了今日签【${fortune.leve
 export const prizeShare = (prize, collected, total) =>
   `我在「快乐扭蛋机」抽到了【${prize.title.replace(/！$/, '')}】${exclaim(oneLine(prize.text))}图鉴已收集 ${collected}/${total}`;
 
+export const secretShare = (prize) =>
+  `我找到了「快乐扭蛋机」不在图鉴里的隐藏款！【${prize.title}】${exclaim(oneLine(prize.text))}`;
+
 export const completeShare = (total, text) => `我集齐了「快乐扭蛋机」全部 ${total} 款扭蛋！${exclaim(oneLine(text))}`;
 
 export const smileShare = '报告小猫店长：佳佳笑了，任务完成！';

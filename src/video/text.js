@@ -84,6 +84,19 @@ export const FORTUNES = [
 export const COMPLETE_TITLE = '集齐啦！';
 export const COMPLETE_TEXT = '小猫店长颁发：\n佳佳年度最可爱奖';
 
+// 网页版真正的隐藏款：不在图鉴里，只有连续戳小猫店长 5 下之后的下一颗才会开出来。
+// 视频里的金色扭蛋是"好运一整天"，这里升级成一整年，算是给找到它的人的奖励
+export const SECRET_PRIZE = { title: '小猫店长的私藏', text: '一整年的好运\n全部送给佳佳', label: '私藏★' };
+
+// 图鉴下方的提示，扭得越多说得越明白。spins 是扭过的次数
+export const SECRET_HINTS = [
+  { spins: 5, text: '听说小猫店长藏了一颗不在图鉴里的扭蛋……' },
+  { spins: 12, text: '小道消息：小猫店长被连续戳会害羞，一害羞就想送东西' },
+];
+export const SECRET_HINT_COMPLETE = '图鉴集齐啦！不过小猫店长还藏着一颗私房扭蛋，连续戳它 5 下试试？';
+export const SECRET_READY = '扭蛋机好像在发光……';
+export const SECRET_FOUND = '连不在图鉴里的私藏都找到了，佳佳是真正的扭蛋大师！';
+
 export const FOODS = [
   { name: '奶茶', text: '今日份甜度已补充' },
   { name: '草莓蛋糕', text: '热量归小猫，快乐归佳佳' },

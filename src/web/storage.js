@@ -1,7 +1,8 @@
 // 把扭蛋记录存在她手机浏览器里（localStorage），下次打开还在
 const KEY = 'happy-gacha-v1';
 
-const DEFAULT = { collected: [], spins: 0, sinceHidden: 0, completed: false, fortune: null };
+// secretReady：已经触发了秘密操作，下一颗扭蛋必出隐藏款
+const DEFAULT = { collected: [], spins: 0, completed: false, secretReady: false, fortune: null };
 
 export const loadSave = () => {
   try {
