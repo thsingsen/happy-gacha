@@ -270,6 +270,7 @@ button {
 }
 
 .prize-text {
+  white-space: pre-line;
   margin-top: 12px;
   font-size: 24px;
   font-weight: 900;
