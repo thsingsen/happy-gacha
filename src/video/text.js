@@ -56,6 +56,34 @@ export const COMPLIMENTS = [
   '佳佳的笑容\n有治愈一切的魔法',
 ];
 
+// 网页互动版的每日一签：每天换一支，20 天内不重复
+export const FORTUNES = [
+  { level: '大吉', text: '今日宜：喝一杯全糖奶茶' },
+  { level: '上上签', text: '今天会有一件小小的好事发生' },
+  { level: '大吉', text: '今日宜：早点睡觉，梦里有小猫' },
+  { level: '超吉', text: '今天的佳佳，颜值满分' },
+  { level: '大吉', text: '今日宜：吃点甜的，烦恼自动退散' },
+  { level: '上上签', text: '今天做的决定都是对的' },
+  { level: '大吉', text: '今日宜：出门晒晒太阳' },
+  { level: '超吉', text: '今天说的话都会被温柔对待' },
+  { level: '大吉', text: '今日宜：给自己放个小假' },
+  { level: '上上签', text: '今天的运气，比昨天多一点' },
+  { level: '大吉', text: '今日宜：听一首喜欢的歌' },
+  { level: '超吉', text: '今天的佳佳，闪闪发光' },
+  { level: '大吉', text: '今日宜：拍一张好看的照片' },
+  { level: '上上签', text: '遇到的烦心事，都会顺利解决' },
+  { level: '大吉', text: '今日宜：大笑三次' },
+  { level: '超吉', text: '今天出门，一路都是绿灯' },
+  { level: '大吉', text: '今日宜：点一份想吃很久的外卖' },
+  { level: '上上签', text: '今天会被人偷偷夸' },
+  { level: '大吉', text: '今日宜：抱一抱喜欢的东西' },
+  { level: '小猫认证', text: '今天也是被小猫守护的一天' },
+];
+
+// 图鉴集齐后的奖励
+export const COMPLETE_TITLE = '集齐啦！';
+export const COMPLETE_TEXT = '小猫店长颁发：\n佳佳年度最可爱奖';
+
 export const FOODS = [
   { name: '奶茶', text: '今日份甜度已补充' },
   { name: '草莓蛋糕', text: '热量归小猫，快乐归佳佳' },

@@ -73,6 +73,21 @@ button {
   font-size: clamp(14px, 4vw, 18px);
 }
 
+.load-bar {
+  width: 180px;
+  height: 12px;
+  border-radius: 6px;
+  border: 3px solid #6b4432;
+  background: #fff;
+  overflow: hidden;
+}
+
+.load-bar div {
+  height: 100%;
+  background: #ff7fa3;
+  transition: width 0.3s;
+}
+
 .cover-tip {
   font-size: 14px;
   opacity: 0.7;
@@ -148,17 +163,218 @@ button {
   opacity: 0.7;
 }
 
-.station {
+.panel {
   width: 100%;
   max-width: 420px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: rgba(255, 255, 255, 0.7);
   border: 4px solid #6b4432;
   border-radius: 28px;
-  padding: 16px;
+  padding: 14px 16px 16px;
   position: relative;
+  text-align: center;
+}
+
+.panel-title {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+
+/* ---------- 今日签 ---------- */
+.tube {
+  position: relative;
+  width: 70px;
+  height: 110px;
+  margin: 4px 0 10px;
+  cursor: pointer;
+}
+
+.tube-shake {
+  animation: tube-shake 0.15s linear infinite;
+}
+
+@keyframes tube-shake {
+  0%, 100% { transform: rotate(-10deg); }
+  50% { transform: rotate(10deg); }
+}
+
+.sticks {
+  position: absolute;
+  bottom: 60px;
+  left: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.sticks span {
+  width: 7px;
+  border-radius: 3px 3px 0 0;
+  background: #e4b477;
+  border: 2px solid #6b4432;
+}
+
+.tube-body {
+  position: absolute;
+  bottom: 0;
+  width: 70px;
+  height: 70px;
+  border-radius: 10px 10px 16px 16px;
+  background: #f0435e;
+  border: 4px solid #6b4432;
+  color: #fff;
+  font-size: 26px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.big-btn.small {
+  margin-top: 0;
+  padding: 10px 30px;
+  font-size: 18px;
+}
+
+.fortune-result {
+  width: 100%;
+  animation: card-pop-simple 0.5s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.fortune-level {
+  display: inline-block;
+  padding: 4px 20px;
+  border-radius: 20px;
+  background: #f0435e;
+  color: #fff;
+  font-size: 22px;
+  font-weight: 900;
+  border: 3px solid #6b4432;
+}
+
+.fortune-text {
+  margin-top: 10px;
+  font-size: 22px;
+  font-weight: 900;
+  line-height: 1.4;
+}
+
+.fortune-tip {
+  margin-top: 4px;
+  font-size: 12px;
+  opacity: 0.6;
+}
+
+/* ---------- 分享、图鉴、提示 ---------- */
+.share-btn {
+  margin-top: 12px;
+  padding: 8px 20px;
+  border-radius: 20px;
+  border: 3px solid #6b4432;
+  background: #9edfc9;
+  color: #6b4432;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.new-badge {
+  position: absolute;
+  top: -14px;
+  right: 16px;
+  padding: 2px 12px;
+  border-radius: 12px;
+  background: #ffc83d;
+  border: 3px solid #6b4432;
+  font-size: 13px;
+  font-weight: 900;
+  transform: rotate(8deg);
+}
+
+.book-count {
+  font-size: 16px;
+  color: #ff7fa3;
+}
+
+.book-grid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.book-tile {
+  aspect-ratio: 1;
+  padding: 0;
+  border-radius: 10px;
+  border: 3px solid #6b4432;
+  background: #e6dfe3;
+  color: #9a8f94;
+  font-size: 11px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.book-tile.got {
+  background: #ffb7c9;
+  color: #6b4432;
+}
+
+.book-tile.got.hidden-tile {
+  background: #ffd24d;
+}
+
+.book-tip {
+  margin-top: 8px;
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(60, 30, 40, 0.45);
+}
+
+.prize-card.static {
+  position: fixed;
+  top: 50%;
+  width: min(88%, 380px);
+}
+
+.copy-text {
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: #fff6e9;
+  border: 2px dashed #6b4432;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.5;
+  text-align: left;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%);
+  z-index: 60;
+  padding: 10px 20px;
+  border-radius: 20px;
+  background: rgba(107, 68, 50, 0.92);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 900;
+  white-space: nowrap;
+  animation: card-pop-simple 0.3s ease-out;
 }
 
 .station-row {
@@ -283,23 +499,9 @@ button {
   opacity: 0.6;
 }
 
-.question {
-  width: 100%;
-  max-width: 420px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 4px solid #6b4432;
-  border-radius: 28px;
-  padding: 14px;
-  text-align: center;
-}
-
-.question-title {
-  font-size: 26px;
-  font-weight: 900;
-}
-
 .question-area {
   position: relative;
+  width: 100%;
   height: 180px;
 }
 
@@ -336,6 +538,7 @@ button {
 
 .question-area.done {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }

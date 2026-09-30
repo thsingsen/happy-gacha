@@ -81,6 +81,11 @@ export const Shopping = () => {
   const catX = 315 + (rise - fall) * 75;
   const catBottom = 1318 + bob - jumpUp;
   const jumping = frame >= 318 && frame < LAND;
+  // 起跳前先蹲一下、起跳时拉长、落地时压扁
+  const squash = interpolate(frame, [308, 314, 318, 330, LAND, LAND + 3, LAND + 10], [1, 0.82, 1.14, 1, 1, 0.8, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
   const holdingTea = frame >= CATCH;
 
   let expression = 'determined';
@@ -156,13 +161,14 @@ export const Shopping = () => {
         <Bicycle size={620} spin={dist * 1.5} />
       </Place>
 
-      <Place x={catX} y={catBottom} z={4} rotate={jumping ? -10 : 0}>
+      <Place x={catX} y={catBottom} z={4} rotate={jumping ? -10 : 0} sx={1 + (1 - squash) * 0.7} sy={squash}>
         <Cat
           size={360}
           expression={expression}
           arms={jumping || holdingTea ? 'up' : 'hold'}
           blink={blinkAt(frame, 60)}
           tail={Math.sin(frame / 5) * 14}
+          pedal={jumping ? undefined : (dist * 0.75 * Math.PI) / 180}
         />
       </Place>
 
@@ -229,6 +235,7 @@ export const Shopping = () => {
       <Sfx at={318} name="boing" />
       <Sfx at={CATCH} name="ding" />
       <Sfx at={LAND} name="sparkle" />
+      <Sfx at={LAND + 6} name="meow" volume={0.9} rate={1.15} />
     </SceneFade>
   );
 };

@@ -135,6 +135,7 @@ export const Baking = () => {
       <Caption from={FLAG - 4} dur={76}>{TEXT.bake4}</Caption>
 
       <Sfx at={POOF} name="poof" volume={1} />
+      <Sfx at={150} name="meow" volume={0.7} rate={0.75} />
       <Sfx at={CAKE} name="pop" />
       <Sfx at={FLAG} name="ding" />
       <Sfx at={FLAG + 8} name="sparkle" />

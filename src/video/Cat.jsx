@@ -11,6 +11,7 @@ import { C } from './theme.js';
 // tail: 尾巴摆动角度（度）
 // floured: 被面粉扑成白猫
 // puffed: 炸毛
+// pedal: 踩踏板的角度（弧度），传了之后两只脚会一前一后画圈
 
 const DEFAULT_MOUTH = {
   normal: 'w',
@@ -140,6 +141,7 @@ export const Cat = ({
   tail = 0,
   floured = false,
   puffed = false,
+  pedal,
   size = 400,
   style,
 }) => {
@@ -165,8 +167,14 @@ export const Cat = ({
         <path d="M380 290 L365 285 M384 270 L368 268" stroke={stripe} strokeWidth="8" strokeLinecap="round" />
       </g>
 
-      <ellipse cx="145" cy="425" rx="40" ry="22" fill={fur} stroke={line} strokeWidth="5" />
-      <ellipse cx="255" cy="425" rx="40" ry="22" fill={fur} stroke={line} strokeWidth="5" />
+      {[
+        [145, 0],
+        [255, Math.PI],
+      ].map(([fx, offset]) => {
+        const dx = pedal === undefined ? 0 : Math.cos(pedal + offset) * 22;
+        const dy = pedal === undefined ? 0 : Math.sin(pedal + offset) * 16;
+        return <ellipse key={fx} cx={fx + dx} cy={425 + dy} rx="40" ry="22" fill={fur} stroke={line} strokeWidth="5" />;
+      })}
 
       <ellipse cx="200" cy="335" rx="122" ry="100" fill={fur} stroke={line} strokeWidth="5" />
       <ellipse cx="200" cy="350" rx="72" ry="64" fill={belly} />

@@ -143,6 +143,7 @@ export const Ending = () => {
       ))}
       <Sfx at={CLICK} name="click" volume={1} />
       <Sfx at={CLICK + 2} name="fanfare" />
+      <Sfx at={CLICK + 16} name="meow" volume={0.9} rate={1.2} />
     </SceneFade>
   );
 };

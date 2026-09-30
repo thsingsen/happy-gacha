@@ -1,15 +1,21 @@
-// 用纯代码合成背景音乐和音效，输出 wav 到 public/audio/
-// 运行：npm run audio
+// 用纯代码合成背景音乐和音效，输出 mp3 到 public/audio/
+// 运行：npm run audio（需要电脑上装有 ffmpeg）
 //
 // 声音的本质是空气振动。数字音频就是每秒记录几万个"振动位置"的数字（采样）。
 // 这里我们自己算出这些数字：正弦波听起来柔和，方波像老游戏机，随机噪声像"沙沙"声。
+// 算出来的是未压缩的 wav，再用 ffmpeg 压成 mp3，体积能小 5 倍以上，手机打开更快。
 
-import { mkdirSync, writeFileSync } from 'node:fs';
+import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const OUT_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'public', 'audio');
+const TMP_DIR = join(tmpdir(), 'happy-gacha-audio');
+rmSync(OUT_DIR, { recursive: true, force: true });
 mkdirSync(OUT_DIR, { recursive: true });
+mkdirSync(TMP_DIR, { recursive: true });
 
 const midiToFreq = (m) => 440 * 2 ** ((m - 69) / 12);
 
@@ -84,8 +90,13 @@ function writeWav(name, buf, sr, { peak = 0.85, fadeOut = 0.02 } = {}) {
     const v = Math.max(-1, Math.min(1, buf[i] * scale * fade));
     data.writeInt16LE(Math.round(v * 32767), 44 + i * 2);
   }
-  writeFileSync(join(OUT_DIR, name), data);
-  console.log(`已生成 public/audio/${name}`);
+  const wavPath = join(TMP_DIR, name);
+  const mp3Name = name.replace(/\.wav$/, '.mp3');
+  writeFileSync(wavPath, data);
+  const bitrate = name === 'bgm.wav' ? '64k' : '80k';
+  const r = spawnSync('ffmpeg', ['-y', '-loglevel', 'error', '-i', wavPath, '-codec:a', 'libmp3lame', '-b:a', bitrate, join(OUT_DIR, mp3Name)]);
+  if (r.status !== 0) throw new Error(`ffmpeg 转换 ${name} 失败：${r.stderr}`);
+  console.log(`已生成 public/audio/${mp3Name}`);
 }
 
 // ---------------- 背景音乐：120 拍/分钟，C - Am - F - G 循环 ----------------
@@ -237,7 +248,47 @@ function makeSparkle() {
   writeWav('sparkle.wav', buf, SR);
 }
 
+// 猫叫"喵"：一个音高先升后降的声音，叠加很多泛音，
+// 再让"共振峰"（声音最亮的频段）从 i 滑到 a 再滑到 u，听起来就像 mi-a-u
+function makeMeow() {
+  const dur = 0.62;
+  const buf = sfx(dur + 0.1);
+  const lerpKeys = (keys, p) => {
+    for (let i = 1; i < keys.length; i++) {
+      if (p <= keys[i][0]) {
+        const [p0, v0] = keys[i - 1];
+        const [p1, v1] = keys[i];
+        return v0 + ((v1 - v0) * (p - p0)) / (p1 - p0);
+      }
+    }
+    return keys[keys.length - 1][1];
+  };
+  const pitch = [[0, 560], [0.3, 820], [0.7, 640], [1, 470]];
+  const f1 = [[0, 300], [0.25, 450], [0.55, 850], [1, 380]];
+  const f2 = [[0, 1800], [0.25, 2300], [0.55, 1400], [1, 850]];
+  const phases = new Float64Array(14);
+  const len = Math.floor(dur * SR);
+  for (let i = 0; i < len; i++) {
+    const t = i / SR;
+    const p = t / dur;
+    const f0 = lerpKeys(pitch, p) * (1 + Math.sin(t * 38) * 0.012);
+    const F1 = lerpKeys(f1, p);
+    const F2 = lerpKeys(f2, p);
+    const env = Math.min(1, t / 0.07) * Math.min(1, (dur - t) / 0.18);
+    let s = 0;
+    for (let k = 1; k <= 14; k++) {
+      const f = f0 * k;
+      phases[k - 1] += (2 * Math.PI * f) / SR;
+      const a = Math.exp(-(((f - F1) / 220) ** 2)) + 0.55 * Math.exp(-(((f - F2) / 320) ** 2)) + 0.05 / k;
+      s += Math.sin(phases[k - 1]) * a;
+    }
+    buf[i] += s * env * 0.3;
+  }
+  writeWav('meow.wav', buf, SR);
+}
+
 makeBgm();
+makeMeow();
 makeDing();
 makePop();
 makePoof();

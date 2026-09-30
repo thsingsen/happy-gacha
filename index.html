@@ -5,9 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <meta name="theme-color" content="#FFD6E2" />
     <title>佳佳专属快乐频道</title>
+    <style>
+      /* 脚本下载完之前先显示这个，所以只能用纯 HTML + CSS */
+      html, body { margin: 0; height: 100%; background: #fff6e9; }
+      .boot {
+        height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px;
+        background: linear-gradient(#ffd6e2, #fff3da);
+        font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; color: #6b4432; font-weight: 900; font-size: 18px;
+      }
+      .boot-paws { display: flex; gap: 14px; }
+      .boot-paws span {
+        width: 22px; height: 22px; border-radius: 50%; background: #f6a04d; border: 3px solid #6b4432;
+        animation: boot-hop 0.9s ease-in-out infinite;
+      }
+      .boot-paws span:nth-child(2) { animation-delay: 0.15s; }
+      .boot-paws span:nth-child(3) { animation-delay: 0.3s; }
+      @keyframes boot-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-18px); } }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="boot">
+        <div class="boot-paws"><span></span><span></span><span></span></div>
+        <div>小猫正在赶来……</div>
+      </div>
+    </div>
     <script type="module" src="/src/web/main.jsx"></script>
   </body>
 </html>

@@ -3,7 +3,7 @@ import { AbsoluteFill, interpolate, useCurrentFrame } from 'remotion';
 import { C, FONT, WIDTH } from '../theme.js';
 import { TEXT } from '../text.js';
 import { Cat } from '../Cat.jsx';
-import { Petals, Place, SceneFade, usePop } from '../common.jsx';
+import { Petals, Place, SceneFade, Sfx, usePop } from '../common.jsx';
 
 // 片尾（90 帧）
 export const Outro = () => {
@@ -34,6 +34,7 @@ export const Outro = () => {
           <Cat size={480} expression="happy" arms="up" tail={Math.sin(frame / 5) * 16} />
         </Place>
       </AbsoluteFill>
+      <Sfx at={30} name="meow" volume={0.8} />
     </SceneFade>
   );
 };

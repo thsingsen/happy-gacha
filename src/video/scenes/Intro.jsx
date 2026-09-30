@@ -103,7 +103,8 @@ export const Intro = () => {
       </Place>
 
       <Sfx at={32} name="ding" />
-      <Sfx at={66} name="boing" volume={0.6} />
+      <Sfx at={66} name="boing" volume={0.4} />
+      <Sfx at={74} name="meow" volume={0.9} rate={1.1} />
     </SceneFade>
   );
 };

@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   AbsoluteFill,
+  Easing,
   getRemotionEnvironment,
   Html5Audio,
   Sequence,
@@ -15,7 +16,8 @@ import { C, FONT, WIDTH, HEIGHT } from './theme.js';
 import { Flower, Star } from './Props.jsx';
 
 // 以"底部中点"为锚点摆放元素，方便让角色站在地面上
-export const Place = ({ x, y, scale = 1, rotate = 0, origin = 'bottom center', opacity = 1, z, children }) => (
+// sx / sy 用来做挤压和拉伸：落地时横向变宽、纵向变扁，起跳时反过来
+export const Place = ({ x, y, scale = 1, sx = 1, sy = 1, rotate = 0, origin = 'bottom center', opacity = 1, z, children }) => (
   <div
     style={{
       position: 'absolute',
@@ -23,7 +25,7 @@ export const Place = ({ x, y, scale = 1, rotate = 0, origin = 'bottom center', o
       top: y,
       opacity,
       zIndex: z,
-      transform: `translate(-50%, -100%) rotate(${rotate}deg) scale(${scale})`,
+      transform: `translate(-50%, -100%) rotate(${rotate}deg) scale(${scale * sx}, ${scale * sy})`,
       transformOrigin: origin,
     }}
   >
@@ -42,19 +44,32 @@ export const usePop = (delay = 0, config = { damping: 12 }) => {
 export const asset = (path) =>
   getRemotionEnvironment().isPlayer ? new URL(path, document.baseURI).href : staticFile(path);
 
-export const Sfx = ({ at, name, volume = 0.8 }) => (
+// rate 是播放速度：大于 1 声音更高更快（开心），小于 1 更低更慢（懒洋洋、委屈）
+export const Sfx = ({ at, name, volume = 0.8, rate = 1 }) => (
   <Sequence from={at} durationInFrames={90} layout="none">
-    <Html5Audio src={asset(`audio/${name}.wav`)} volume={volume} />
+    <Html5Audio src={asset(`audio/${name}.mp3`)} volume={volume} playbackRate={rate} />
   </Sequence>
 );
 
-// 每一幕开头淡入，避免硬切
-export const SceneFade = ({ children, bg = C.cream }) => {
+// 每一幕的底色和字体
+export const SceneFade = ({ children, bg = C.cream }) => (
+  <AbsoluteFill style={{ backgroundColor: bg, fontFamily: FONT }}>{children}</AbsoluteFill>
+);
+
+// 卡通片式的圆形转场：开头从一个小圆展开，结尾缩成一个圆消失
+// circle() 的半径是百分比，约 71% 时正好盖住整个画面，这里用 75% 留点余量
+export const Iris = ({ frames, irisIn = true, irisOut = true, children }) => {
   const frame = useCurrentFrame();
-  const opacity = interpolate(frame, [0, 8], [0, 1], { extrapolateRight: 'clamp' });
+  const open = irisIn
+    ? interpolate(frame, [0, 12], [0, 75], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.out(Easing.cubic) })
+    : 75;
+  const close = irisOut
+    ? interpolate(frame, [frames - 10, frames - 1], [75, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp', easing: Easing.in(Easing.cubic) })
+    : 75;
+  const r = Math.min(open, close);
   return (
-    <AbsoluteFill style={{ backgroundColor: bg, fontFamily: FONT }}>
-      <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>
+    <AbsoluteFill style={{ backgroundColor: C.brown }}>
+      <AbsoluteFill style={{ clipPath: r >= 75 ? undefined : `circle(${r}% at 50% 45%)` }}>{children}</AbsoluteFill>
     </AbsoluteFill>
   );
 };

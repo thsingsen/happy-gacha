@@ -161,7 +161,12 @@ export const Bicycle = ({ size = 620, spin = 0, style }) => {
       </g>
       <path d="M105 36 L160 36" stroke={INK} strokeWidth="16" strokeLinecap="round" />
       <path d="M252 20 L292 14" stroke={INK} strokeWidth="12" strokeLinecap="round" />
-      <circle cx="170" cy="150" r="14" fill="#fff" stroke={INK} strokeWidth="5" />
+      <circle cx="170" cy="150" r="22" fill="#fff" stroke={INK} strokeWidth="5" />
+      <g transform={`rotate(${spin * 0.5} 170 150)`}>
+        <line x1="136" y1="150" x2="204" y2="150" stroke={INK} strokeWidth="8" strokeLinecap="round" />
+        <rect x="190" y="143" width="26" height="14" rx="4" fill={C.yellow} stroke={INK} strokeWidth="4" transform={`rotate(${-spin * 0.5} 203 150)`} />
+        <rect x="124" y="143" width="26" height="14" rx="4" fill={C.yellow} stroke={INK} strokeWidth="4" transform={`rotate(${-spin * 0.5} 137 150)`} />
+      </g>
     </svg>
   );
 };

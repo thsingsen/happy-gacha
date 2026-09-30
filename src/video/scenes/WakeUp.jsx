@@ -77,6 +77,10 @@ export const WakeUp = () => {
   if (frame >= 200) expression = 'determined';
 
   const breathe = frame < 100 ? Math.sin(frame / 10) * 0.02 : 0;
+  const squash = interpolate(frame, [170, 176, 178, 190, 199, 202, 210], [1, 0.84, 1.16, 1, 1, 0.82, 1], {
+    extrapolateLeft: 'clamp',
+    extrapolateRight: 'clamp',
+  });
   const halfOpen = frame >= 100 && frame < 118 ? 0.55 : 0;
 
   return (
@@ -87,7 +91,15 @@ export const WakeUp = () => {
       <div style={{ position: 'absolute', left: 80, top: 1180, width: 820, height: 200, borderRadius: 40, background: '#fff', border: `10px solid ${C.brown}` }} />
       <div style={{ position: 'absolute', left: 60, top: 1100, width: 60, height: 300, borderRadius: 20, background: '#C98A5B', border: `10px solid ${C.brown}` }} />
 
-      <Place x={420 + dash} y={1310 + jumpY} scale={(1 + breathe) * (frame >= 178 ? 0.9 + jump * 0.1 : 1)} rotate={frame < 100 ? -8 : 0} z={2}>
+      <Place
+        x={420 + dash}
+        y={1310 + jumpY}
+        scale={(1 + breathe) * (frame >= 178 ? 0.9 + jump * 0.1 : 1)}
+        sx={1 + (1 - squash) * 0.7}
+        sy={squash}
+        rotate={frame < 100 ? -8 : 0}
+        z={2}
+      >
         <Cat
           size={560}
           expression={expression}
@@ -127,6 +139,7 @@ export const WakeUp = () => {
       <Caption from={180} dur={60}>{TEXT.wake3}</Caption>
 
       <Sfx at={45} name="alarm" volume={0.5} />
+      <Sfx at={104} name="meow" volume={0.7} rate={0.8} />
       <Sfx at={120} name="whoosh" volume={0.5} />
       <Sfx at={178} name="boing" />
       <Sfx at={204} name="whoosh" />

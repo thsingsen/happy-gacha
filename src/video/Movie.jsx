@@ -1,7 +1,7 @@
 import React from 'react';
 import { AbsoluteFill, Html5Audio, Series, interpolate } from 'remotion';
 import { C } from './theme.js';
-import { asset } from './common.jsx';
+import { Iris, asset } from './common.jsx';
 import { Intro } from './scenes/Intro.jsx';
 import { WakeUp } from './scenes/WakeUp.jsx';
 import { Shopping } from './scenes/Shopping.jsx';
@@ -27,14 +27,16 @@ export const TOTAL_FRAMES = SCENES.reduce((sum, s) => sum + s.frames, 0);
 export const Movie = () => (
   <AbsoluteFill style={{ backgroundColor: C.cream }}>
     <Series>
-      {SCENES.map(({ name, component: Scene, frames }) => (
+      {SCENES.map(({ name, component: Scene, frames }, i) => (
         <Series.Sequence key={name} name={name} durationInFrames={frames}>
-          <Scene />
+          <Iris frames={frames} irisOut={i < SCENES.length - 1}>
+            <Scene />
+          </Iris>
         </Series.Sequence>
       ))}
     </Series>
     <Html5Audio
-      src={asset('audio/bgm.wav')}
+      src={asset('audio/bgm.mp3')}
       volume={(f) => interpolate(f, [0, 20, TOTAL_FRAMES - 45, TOTAL_FRAMES], [0, 0.32, 0.32, 0], { extrapolateRight: 'clamp' })}
     />
   </AbsoluteFill>
