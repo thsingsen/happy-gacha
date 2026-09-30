@@ -1,0 +1,244 @@
+import React from 'react';
+import {
+  AbsoluteFill,
+  Html5Audio,
+  Sequence,
+  interpolate,
+  random,
+  spring,
+  staticFile,
+  useCurrentFrame,
+  useVideoConfig,
+} from 'remotion';
+import { C, FONT, WIDTH, HEIGHT } from './theme.js';
+import { Flower, Star } from './Props.jsx';
+
+// 以"底部中点"为锚点摆放元素，方便让角色站在地面上
+export const Place = ({ x, y, scale = 1, rotate = 0, origin = 'bottom center', opacity = 1, z, children }) => (
+  <div
+    style={{
+      position: 'absolute',
+      left: x,
+      top: y,
+      opacity,
+      zIndex: z,
+      transform: `translate(-50%, -100%) rotate(${rotate}deg) scale(${scale})`,
+      transformOrigin: origin,
+    }}
+  >
+    {children}
+  </div>
+);
+
+// 弹簧动画的小封装：从 delay 帧开始，数值从 0 弹到 1
+export const usePop = (delay = 0, config = { damping: 12 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  return spring({ frame: frame - delay, fps, config });
+};
+
+export const Sfx = ({ at, name, volume = 0.8 }) => (
+  <Sequence from={at} durationInFrames={90} layout="none">
+    <Html5Audio src={staticFile(`audio/${name}.wav`)} volume={volume} />
+  </Sequence>
+);
+
+// 每一幕开头淡入，避免硬切
+export const SceneFade = ({ children, bg = C.cream }) => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(frame, [0, 8], [0, 1], { extrapolateRight: 'clamp' });
+  return (
+    <AbsoluteFill style={{ backgroundColor: bg, fontFamily: FONT }}>
+      <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+
+const CaptionInner = ({ children, dur, y }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const s = spring({ frame, fps, config: { damping: 14 } });
+  const out = interpolate(frame, [dur - 6, dur], [1, 0], { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' });
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: 0,
+        right: 0,
+        top: y,
+        display: 'flex',
+        justifyContent: 'center',
+        zIndex: 50,
+        opacity: out,
+        transform: `translateY(${(1 - s) * 40}px) scale(${0.8 + s * 0.2})`,
+      }}
+    >
+      <div
+        style={{
+          background: 'rgba(255,255,255,0.94)',
+          border: `6px solid ${C.brown}`,
+          borderRadius: 48,
+          padding: '22px 44px',
+          fontSize: 56,
+          fontWeight: 900,
+          color: C.brown,
+          fontFamily: FONT,
+          maxWidth: 940,
+          textAlign: 'center',
+          boxShadow: '0 10px 0 rgba(107,68,50,0.18)',
+          whiteSpace: 'pre-line',
+        }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
+// 底部字幕：from 第几帧出现，dur 持续多少帧
+export const Caption = ({ from, dur, children, y = 1600 }) => (
+  <Sequence from={from} durationInFrames={dur} layout="none">
+    <CaptionInner dur={dur} y={y}>
+      {children}
+    </CaptionInner>
+  </Sequence>
+);
+
+// 漫画式大字（比如"叮铃铃！"）
+export const BigWord = ({ x, y, children, size = 110, color = C.pinkDeep, rotate = -8, scale = 1 }) => (
+  <div
+    style={{
+      position: 'absolute',
+      left: x,
+      top: y,
+      transform: `translate(-50%, -50%) rotate(${rotate}deg) scale(${scale})`,
+      zIndex: 20,
+      fontSize: size,
+      fontWeight: 900,
+      color,
+      fontFamily: FONT,
+      WebkitTextStroke: `10px ${C.brown}`,
+      paintOrder: 'stroke fill',
+      whiteSpace: 'nowrap',
+      letterSpacing: 4,
+    }}
+  >
+    {children}
+  </div>
+);
+
+// 满屏飘落的花瓣。random(种子) 每次返回同一个值，保证每次导出画面完全一样
+const PETAL_COLORS = [C.pinkDeep, '#FFB7C9', C.yellow, '#fff', C.mint];
+export const Petals = ({ count = 30, start = 0, speed = 1, seed = 'petal' }) => {
+  const frame = useCurrentFrame() - start;
+  if (frame < 0) return null;
+  return (
+    <AbsoluteFill style={{ pointerEvents: 'none' }}>
+      {Array.from({ length: count }).map((_, i) => {
+        const x0 = random(`${seed}-x-${i}`) * WIDTH;
+        const delay = random(`${seed}-d-${i}`) * 60;
+        const v = (3 + random(`${seed}-v-${i}`) * 4) * speed;
+        const t = Math.max(0, frame - delay);
+        const y = -80 + t * v;
+        const x = x0 + Math.sin((t + i * 20) / 18) * 50;
+        const size = 40 + random(`${seed}-s-${i}`) * 40;
+        if (y > HEIGHT + 100 || t === 0) return null;
+        return (
+          <div key={i} style={{ position: 'absolute', left: x, top: y, transform: `rotate(${t * 3 + i * 40}deg)` }}>
+            <Flower size={size} color={PETAL_COLORS[i % PETAL_COLORS.length]} />
+          </div>
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
+// 从某点炸开的彩纸
+const CONFETTI_COLORS = [C.pinkDeep, C.yellow, C.mint, '#8FD0FF', '#C7A6FF', '#fff'];
+export const Confetti = ({ x, y, start = 0, count = 40, seed = 'conf', power = 1 }) => {
+  const frame = useCurrentFrame() - start;
+  if (frame < 0 || frame > 90) return null;
+  return (
+    <AbsoluteFill style={{ pointerEvents: 'none' }}>
+      {Array.from({ length: count }).map((_, i) => {
+        const a = random(`${seed}-a-${i}`) * Math.PI * 2;
+        const v = (14 + random(`${seed}-v-${i}`) * 22) * power;
+        const px = x + Math.cos(a) * v * frame * 0.9;
+        const py = y + Math.sin(a) * v * frame * 0.9 + 0.9 * frame * frame;
+        const opacity = interpolate(frame, [60, 90], [1, 0], { extrapolateLeft: 'clamp' });
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: px,
+              top: py,
+              width: 22,
+              height: 36,
+              borderRadius: 6,
+              background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+              border: `3px solid ${C.brown}`,
+              opacity,
+              transform: `rotate(${frame * (8 + i)}deg)`,
+            }}
+          />
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
+// 一圈一闪一闪的星星
+export const Sparkles = ({ x, y, radius = 220, count = 8, start = 0, color = C.gold, seed = 'spark' }) => {
+  const frame = useCurrentFrame() - start;
+  if (frame < 0) return null;
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => {
+        const a = (i / count) * Math.PI * 2 + random(`${seed}-${i}`) * 0.5;
+        const r = radius * (0.7 + random(`${seed}-r-${i}`) * 0.5);
+        const tw = Math.sin((frame + i * 7) / 5);
+        const s = Math.max(0, tw) * Math.min(1, frame / 8);
+        return (
+          <div
+            key={i}
+            style={{
+              position: 'absolute',
+              left: x + Math.cos(a) * r,
+              top: y + Math.sin(a) * r,
+              transform: `translate(-50%,-50%) scale(${s})`,
+            }}
+          >
+            <Star size={70} color={color} />
+          </div>
+        );
+      })}
+    </>
+  );
+};
+
+// 横向速度线，表现"冲出去"
+export const SpeedLines = ({ opacity = 1, seed = 'speed' }) => {
+  const frame = useCurrentFrame();
+  return (
+    <AbsoluteFill style={{ opacity, pointerEvents: 'none' }}>
+      {Array.from({ length: 14 }).map((_, i) => {
+        const y = random(`${seed}-y-${i}`) * HEIGHT;
+        const len = 200 + random(`${seed}-l-${i}`) * 400;
+        const x = WIDTH - ((frame * 80 + random(`${seed}-x-${i}`) * 2000) % (WIDTH + len * 2));
+        return (
+          <div
+            key={i}
+            style={{ position: 'absolute', left: x, top: y, width: len, height: 10, borderRadius: 5, background: 'rgba(255,255,255,0.8)' }}
+          />
+        );
+      })}
+    </AbsoluteFill>
+  );
+};
+
+// 小猫眨眼：每隔一段时间闭一下眼，返回 0~1
+export const blinkAt = (frame, every = 70, offset = 0) => {
+  const t = (frame + offset) % every;
+  return t < 3 ? 1 - Math.abs(t - 1.5) / 1.5 : 0;
+};

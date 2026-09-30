@@ -1,0 +1,20 @@
+export const FPS = 30;
+export const WIDTH = 1080;
+export const HEIGHT = 1920;
+
+export const FONT = '"PingFang SC", "Microsoft YaHei", "Noto Sans SC", "Hiragino Sans GB", sans-serif';
+
+export const C = {
+  cream: '#FFF6E9',
+  pink: '#FFB7C9',
+  pinkDeep: '#FF7FA3',
+  brown: '#6B4432',
+  orange: '#F6A04D',
+  orangeDark: '#E07B28',
+  catCream: '#FFE8C7',
+  mint: '#9EDFC9',
+  sky: '#BFE6FF',
+  yellow: '#FFD95A',
+  gold: '#FFC83D',
+  white: '#FFFFFF',
+};

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>练习 1：用 CSS 让小球弹跳</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      background: #fff6e9;
+    }
+
+    /* 地面 */
+    .ground {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      height: 80px;
+      background: #e9b98c;
+    }
+
+    .ball {
+      width: 100px;
+      height: 100px;
+      margin-bottom: 80px;
+      border-radius: 50%;
+      background: #ff7fa3;
+      border: 6px solid #6b4432;
+
+      /*
+        animation: 动画名字 时长 缓动方式 重复次数 方向
+        - bounce       下面 @keyframes 定义的动画
+        - 0.8s         播放一遍用多久
+        - ease-in-out  开头和结尾慢、中间快，看起来更自然
+        - infinite     无限循环
+        - alternate    正着放完再倒着放，所以球会上去再下来
+      */
+      animation: bounce 0.8s ease-in-out infinite alternate;
+    }
+
+    /*
+      @keyframes 只描述"关键时刻"的样子，中间的每一帧由浏览器自动补出来。
+      这就是 CSS 动画的核心：你只管起点和终点，过渡交给浏览器。
+    */
+    @keyframes bounce {
+      0% {
+        transform: translateY(0) scale(1.2, 0.8); /* 落地时被压扁 */
+      }
+      20% {
+        transform: translateY(-40px) scale(0.95, 1.05);
+      }
+      100% {
+        transform: translateY(-400px) scale(1, 1); /* 最高点 */
+      }
+    }
+
+    /*
+      动手改一改：
+      1. 把 0.8s 改成 2s，看看变慢是什么感觉
+      2. 把 -400px 改成 -600px，让它跳得更高
+      3. 把 ease-in-out 换成 linear，对比一下为什么缓动很重要
+      4. 把 background 换成你喜欢的颜色，比如 #9EDFC9
+    */
+  </style>
+</head>
+<body>
+  <div class="ball"></div>
+  <div class="ground"></div>
+</body>
+</html>

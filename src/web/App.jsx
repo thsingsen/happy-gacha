@@ -1,0 +1,67 @@
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Player } from '@remotion/player';
+import { Movie, TOTAL_FRAMES } from '../video/Movie.jsx';
+import { FPS, WIDTH, HEIGHT } from '../video/theme.js';
+import { Cat } from '../video/Cat.jsx';
+import { Playground } from './Playground.jsx';
+
+// 网页版分三步：开播页 -> 播放短片 -> 互动结尾
+export const App = () => {
+  const [stage, setStage] = useState('cover');
+  const playerRef = useRef(null);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    const onEnded = () => setStage('play');
+    player.addEventListener('ended', onEnded);
+    return () => player.removeEventListener('ended', onEnded);
+  }, [stage]);
+
+  useLayoutEffect(() => {
+    if (stage !== 'movie') return;
+    playerRef.current?.seekTo(0);
+    playerRef.current?.play();
+  }, [stage]);
+
+  const start = () => setStage('movie');
+
+  if (stage === 'play') {
+    return <Playground onReplay={start} />;
+  }
+
+  return (
+    <div className="screen movie-screen">
+      <div className="player-box">
+        <Player
+          ref={playerRef}
+          component={Movie}
+          durationInFrames={TOTAL_FRAMES}
+          fps={FPS}
+          compositionWidth={WIDTH}
+          compositionHeight={HEIGHT}
+          style={{ width: '100%', height: '100%' }}
+          controls={stage === 'movie'}
+          clickToPlay={stage === 'movie'}
+          acknowledgeRemotionLicense
+        />
+        {stage === 'cover' && (
+          <div className="cover" onClick={start}>
+            <div className="cover-title">佳佳专属快乐频道</div>
+            <div className="cover-sub">第 1 集 · 小猫店长的秘密任务</div>
+            <button className="big-btn">点我开播</button>
+            <div className="cover-tip">记得打开声音哦</div>
+            <div className="cover-cat">
+              <Cat size={220} expression="happy" arms="up" />
+            </div>
+          </div>
+        )}
+      </div>
+      {stage === 'movie' && (
+        <button className="skip-btn" onClick={() => setStage('play')}>
+          跳过，直接玩 →
+        </button>
+      )}
+    </div>
+  );
+};

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>练习 2：用 JS 逐帧移动</title>
+  <style>
+    body { margin: 0; height: 100vh; background: #bfe6ff; overflow: hidden; font-family: sans-serif; }
+    #cat {
+      position: absolute; top: 40%; width: 100px; height: 100px; border-radius: 50%;
+      background: #F6A04D; border: 5px solid #6b4432; color: #6b4432;
+      display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 900;
+    }
+    #info { position: fixed; left: 16px; top: 16px; font-size: 20px; color: #6b4432; }
+  </style>
+</head>
+<body>
+  <div id="info"></div>
+  <div id="cat">喵</div>
+
+  <script>
+    // 动画的本质：每秒画很多张画面（帧），每张都比上一张挪一点点，眼睛就会觉得它在动。
+    // requestAnimationFrame(函数) 的意思是"在浏览器画下一帧之前，帮我执行这个函数"。
+    // 一般屏幕每秒刷新 60 次，所以这个函数每秒会被调用约 60 次。
+
+    const cat = document.getElementById('cat');
+    const info = document.getElementById('info');
+
+    let x = -100;       // 小猫当前的横坐标
+    const speed = 4;    // 每一帧往右走多少像素
+    let frame = 0;      // 已经画了多少帧
+
+    function tick() {
+      frame += 1;
+      x += speed;
+
+      // 走出屏幕右边就从左边重新出来
+      if (x > window.innerWidth) x = -100;
+
+      // 上下晃动：Math.sin 会在 -1 到 1 之间来回变化，乘 20 就是上下 20 像素
+      const y = Math.sin(frame / 8) * 20;
+
+      cat.style.transform = `translate(${x}px, ${y}px)`;
+      info.textContent = `第 ${frame} 帧，x = ${Math.round(x)}`;
+
+      requestAnimationFrame(tick); // 预约下一帧，形成循环
+    }
+
+    requestAnimationFrame(tick);
+
+    // 动手改一改：
+    // 1. 把 speed 改成 10，小猫会跑得更快
+    // 2. 把 frame / 8 改成 frame / 3，看看晃动频率的变化
+    // 3. 试着让小猫从右往左走（提示：speed 改成负数，并修改"走出屏幕"的判断）
+  </script>
+</body>
+</html>

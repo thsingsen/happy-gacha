@@ -1,0 +1,29 @@
+{
+  "name": "jiajia-animation",
+  "version": "1.0.0",
+  "private": true,
+  "description": "小猫店长的秘密任务：送给佳佳的代码动画短片",
+  "type": "module",
+  "scripts": {
+    "audio": "node scripts/make-audio.mjs",
+    "studio": "remotion studio src/video/index.js",
+    "render": "remotion render src/video/index.js Jiajia out/jiajia.mp4 --codec=h264 --crf=26 --image-format=jpeg --jpeg-quality=90",
+    "still": "remotion still src/video/index.js Jiajia out/still.png",
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lesson:studio": "remotion studio lessons/04-remotion/index.js",
+    "lesson:render": "remotion render lessons/04-remotion/index.js Bounce out/lesson-bounce.mp4"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.530",
+    "@remotion/player": "^4.0.530",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.530"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^6.1.1",
+    "vite": "^8.3.1"
+  }
+}
