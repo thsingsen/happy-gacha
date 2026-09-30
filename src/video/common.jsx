@@ -38,7 +38,7 @@ export const usePop = (delay = 0, config = { damping: 12 }) => {
   return spring({ frame: frame - delay, fps, config });
 };
 
-// 网页版可能部署在子路径下（如 /jiajia/），staticFile 只认根目录，所以网页里改用相对路径
+// 网页版可能部署在子路径下（如 /happy-gacha/），staticFile 只认根目录，所以网页里改用相对路径
 export const asset = (path) =>
   getRemotionEnvironment().isPlayer ? new URL(path, document.baseURI).href : staticFile(path);
 
