@@ -1,6 +1,7 @@
 import React from 'react';
-import { AbsoluteFill, Html5Audio, Series, interpolate, staticFile } from 'remotion';
+import { AbsoluteFill, Html5Audio, Series, interpolate } from 'remotion';
 import { C } from './theme.js';
+import { asset } from './common.jsx';
 import { Intro } from './scenes/Intro.jsx';
 import { WakeUp } from './scenes/WakeUp.jsx';
 import { Shopping } from './scenes/Shopping.jsx';
@@ -33,7 +34,7 @@ export const Movie = () => (
       ))}
     </Series>
     <Html5Audio
-      src={staticFile('audio/bgm.wav')}
+      src={asset('audio/bgm.wav')}
       volume={(f) => interpolate(f, [0, 20, TOTAL_FRAMES - 45, TOTAL_FRAMES], [0, 0.32, 0.32, 0], { extrapolateRight: 'clamp' })}
     />
   </AbsoluteFill>

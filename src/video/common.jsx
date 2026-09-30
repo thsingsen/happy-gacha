@@ -1,6 +1,7 @@
 import React from 'react';
 import {
   AbsoluteFill,
+  getRemotionEnvironment,
   Html5Audio,
   Sequence,
   interpolate,
@@ -37,9 +38,13 @@ export const usePop = (delay = 0, config = { damping: 12 }) => {
   return spring({ frame: frame - delay, fps, config });
 };
 
+// 网页版可能部署在子路径下（如 /jiajia/），staticFile 只认根目录，所以网页里改用相对路径
+export const asset = (path) =>
+  getRemotionEnvironment().isPlayer ? new URL(path, document.baseURI).href : staticFile(path);
+
 export const Sfx = ({ at, name, volume = 0.8 }) => (
   <Sequence from={at} durationInFrames={90} layout="none">
-    <Html5Audio src={staticFile(`audio/${name}.wav`)} volume={volume} />
+    <Html5Audio src={asset(`audio/${name}.wav`)} volume={volume} />
   </Sequence>
 );
 
